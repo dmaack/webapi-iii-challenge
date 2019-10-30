@@ -16,8 +16,17 @@ router.post('/', validateUser, (req, res) => {
     })
 });
 
-router.post('/:id/posts', (req, res) => {
+router.post('/:id/posts', validateUserId, (req, res) => {
+    // const id = req.params.id
+    const post = req.body
 
+    postDb.insert(post)
+    .then(post => {
+        res.status(201).send(post)
+    })
+    .catch(() => {
+        res.status(500).json({ error: "There was an error while saving the comment to the database"})
+    })
 });
 
 router.get('/', (req, res) => {
@@ -43,6 +52,24 @@ router.put('/:id', (req, res) => {
 //custom middleware
 
 function validateUserId(req, res, next) {
+    const id = req.body.user_id
+   
+
+    if(id) {
+        userDb.getById(id)
+        .then(user =>{
+            if(user) {
+                next();
+            } else {
+                res.status(400).json({ message: "invalid user id" })
+            }
+        })
+        .catch(() => {
+            res.status(500).json({ error: 'server error'})
+        })
+    } else {
+        next()
+    }
 
 };
 
