@@ -30,19 +30,54 @@ router.post('/:id/posts', validateUserId, (req, res) => {
 });
 
 router.get('/', (req, res) => {
-
+    userDb.get()
+    .then(users => {
+        res.status(200).json(users)
+    })
+    .catch(() => {
+        res.status(500).json({ error: "There was an error while saving the comment to the database" })
+    })
 });
 
 router.get('/:id', (req, res) => {
+    const id = req.params.id
 
+    userDb.getById(id)
+    .then(user => {
+        res.status(200).json(user)
+    })
+    .catch(() => {
+        res.status(500).json({ error: "There was an error while saving the comment to the database" })
+    })
 });
 
 router.get('/:id/posts', (req, res) => {
+    const id = req.params.id
 
+    userDb.getUserPosts(id)
+    .then(posts => {
+        if(posts) { 
+            res.status(200).json(posts)
+        } else {
+            res.status(404).json({ error: 'No user with this id'})
+        }
+    })
+    .catch(() => {
+        res.status(500).json({ error: "There was an error while saving the comment to the database" })
+    })
+    
 });
 
 router.delete('/:id', (req, res) => {
+    const id = req.params.id
 
+    userDb.remove(id)
+    .then(del => {
+        res.status(200).send(`User with ${id} was successfully deleted`)
+    })
+    .catch(() => {
+        res.status(500).json({ error: "There was an error while saving the comment to the database" })
+    })
 });
 
 router.put('/:id', (req, res) => {
