@@ -29,7 +29,7 @@ router.get('/:id', (req, res) => {
 });
 
 router.delete('/:id', (req, res) => {
-    const id = req.params.id
+    const id = req.params.id;
 
     postDb.remove(id) 
     .then(success => {
@@ -41,6 +41,25 @@ router.delete('/:id', (req, res) => {
 });
 
 router.put('/:id', (req, res) => {
+    const id = req.params.id;
+    const postObject = req.body;
+
+    if(!postObject.text || !postObject.user_id) {
+        res.status(400).json({ error: 'Please provide a text in your post'})
+    } else {
+        postDb.update(id, postObject)
+        .then(success => {
+            if(success === 1) {
+                res.status(201).json(success)
+            } else {
+                res.status(500).json({ error: "The post information could not be retrieved." })
+            }
+        })
+        .catch(() => {
+            res.status(500).json({ error: "Server error" })
+        })
+    }
+
 
 });
 
