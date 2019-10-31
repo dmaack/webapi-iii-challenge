@@ -81,7 +81,24 @@ router.delete('/:id', (req, res) => {
 });
 
 router.put('/:id', (req, res) => {
+     const id = req.params.id
+     const userObject = req.body;
 
+     if(!userObject.name) {
+         res.status(400).json({ error: 'Please provide a name for the user'})
+     } else {
+         userDb.update(id, userObject)
+         .then(success => {
+             if(success === 1) {
+                 res.status(201).json(success)
+             } else {
+                 res.status(500).json({ error: "There was an error while saving the comment to the database" })
+             }
+         })
+         .catch(() => {
+            res.status(500).json({ error: "Server error" })
+         })
+     }
 });
 
 //custom middleware

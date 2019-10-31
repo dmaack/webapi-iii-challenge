@@ -1,9 +1,9 @@
 const express = require('express');
-const db = require('./postDb.js')
+const postDb = require('./postDb.js')
 const router = express.Router();
 
 router.get('/', (req, res) => {
-    db.get()
+    postDb.get()
     .then(posts => {
         res.status(200).json(posts)
     })
@@ -15,7 +15,7 @@ router.get('/', (req, res) => {
 router.get('/:id', (req, res) => {
     const id = req.params.id
     
-    db.getById(id)
+    postDb.getById(id)
     .then(post => {
         if(post) {
             res.status(200).json(post)
@@ -29,7 +29,15 @@ router.get('/:id', (req, res) => {
 });
 
 router.delete('/:id', (req, res) => {
+    const id = req.params.id
 
+    postDb.remove(id) 
+    .then(success => {
+        res.status(200).send(`The post with id ${success} was successfully deleted`)
+    })
+    .catch(() => {
+        res.status(500).json({ error: "The post information could not be retrieved." })
+    })
 });
 
 router.put('/:id', (req, res) => {
